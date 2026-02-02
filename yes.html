@@ -46,56 +46,25 @@
 </head>
 
 <body>
-<audio id="bgMusic" src="musica-romantica.mp3" preload="auto" loop></audio>
-
-<button id="playBtn" style="
-  display:none;
-  position:fixed;
-  bottom:20px;
-  left:50%;
-  transform:translateX(-50%);
-  padding:10px 16px;
-  border:0;
-  border-radius:999px;
-  font-weight:700;
-  background:#ffffffcc;
-  backdrop-filter: blur(6px);
-  box-shadow:0 10px 25px rgba(0,0,0,.12);
-  cursor:pointer;
-">
-  🔊 Tap to play
-</button>
-
 <script>
   const music = document.getElementById("bgMusic");
-  const playBtn = document.getElementById("playBtn");
+  music.volume = 0;
 
-  async function tryPlay() {
-    try {
-      await music.play();
-      playBtn.style.display = "none";
-    } catch (e) {
-      // autoplay blocked → show button
-      playBtn.style.display = "block";
-    }
+  function fadeIn() {
+    let v = 0;
+    const i = setInterval(() => {
+      v += 0.05;
+      music.volume = Math.min(v, 1);
+      if (v >= 1) clearInterval(i);
+    }, 120);
   }
 
-  // try immediately
-  tryPlay();
-
-  // user can tap button
-  playBtn.addEventListener("click", () => {
-    music.play();
-    playBtn.style.display = "none";
+  music.play().then(fadeIn).catch(() => {
+    document.body.addEventListener("click", () => {
+      music.play();
+      fadeIn();
+    }, { once: true });
   });
-
-  // also: first interaction anywhere on page
-  document.addEventListener("pointerdown", () => {
-    if (music.paused) {
-      music.play().catch(()=>{});
-      playBtn.style.display = music.paused ? "block" : "none";
-    }
-  }, { once: true });
 </script>
   <div>
     <div class="bear">🐻🎉</div>
