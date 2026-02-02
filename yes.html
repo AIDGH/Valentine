@@ -46,10 +46,22 @@
 </head>
 
 <body>
+  <script>
+  const music = document.getElementById("bgMusic");
+
+  // تلاش برای پخش
+  music.play().catch(() => {
+    // اگر autoplay بلاک شد، با اولین کلیک پلی کن
+    document.body.addEventListener("click", () => {
+      music.play();
+    }, { once: true });
+  });
+</script>
   <div>
     <div class="bear">🐻🎉</div>
     <h1>Yayyy I love youu! 💖</h1>
     <div class="hearts">💗 💕 💞</div>
   </div>
+  <audio id="bgMusic" src="musica-romantica.mp3" autoplay></audio>
 </body>
 </html>

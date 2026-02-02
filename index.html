@@ -138,7 +138,9 @@
 
     // Yes کلیک‌پذیر
     yesBtn.addEventListener("click", () => {
-      window.location.href = "yes.html";
+      setTimeout(() => {
+        window.location.href = "yes.html";
+      }, 800); // یکم صبر کن صدا شروع شه
     });
     // No: جلوگیری کامل از کلیک (حتی کیبورد)
     ["click","mousedown","mouseup","pointerdown","pointerup","touchstart","keydown"].forEach(evt=>{
