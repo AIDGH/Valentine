@@ -46,16 +46,56 @@
 </head>
 
 <body>
-  <script>
-  const music = document.getElementById("bgMusic");
+<audio id="bgMusic" src="musica-romantica.mp3" preload="auto" loop></audio>
 
-  // تلاش برای پخش
-  music.play().catch(() => {
-    // اگر autoplay بلاک شد، با اولین کلیک پلی کن
-    document.body.addEventListener("click", () => {
-      music.play();
-    }, { once: true });
+<button id="playBtn" style="
+  display:none;
+  position:fixed;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  padding:10px 16px;
+  border:0;
+  border-radius:999px;
+  font-weight:700;
+  background:#ffffffcc;
+  backdrop-filter: blur(6px);
+  box-shadow:0 10px 25px rgba(0,0,0,.12);
+  cursor:pointer;
+">
+  🔊 Tap to play
+</button>
+
+<script>
+  const music = document.getElementById("bgMusic");
+  const playBtn = document.getElementById("playBtn");
+
+  async function tryPlay() {
+    try {
+      await music.play();
+      playBtn.style.display = "none";
+    } catch (e) {
+      // autoplay blocked → show button
+      playBtn.style.display = "block";
+    }
+  }
+
+  // try immediately
+  tryPlay();
+
+  // user can tap button
+  playBtn.addEventListener("click", () => {
+    music.play();
+    playBtn.style.display = "none";
   });
+
+  // also: first interaction anywhere on page
+  document.addEventListener("pointerdown", () => {
+    if (music.paused) {
+      music.play().catch(()=>{});
+      playBtn.style.display = music.paused ? "block" : "none";
+    }
+  }, { once: true });
 </script>
   <div>
     <div class="bear">🐻🎉</div>
