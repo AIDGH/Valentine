@@ -1,193 +1,277 @@
 <!doctype html>
-<html lang="en">
+<html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Be My Valentine</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ولنتاینت مبارک</title>
   <style>
     :root{
-      --pink:#ff4fa3;
-      --pink2:#ff79c6;
-      --gray:#e6e6e6;
-      --text:#222;
+      --red:#ff2d55;
+      --pink:#ff6fb7;
+      --soft:#ffe6f1;
+      --white:#ffffff;
+      --bg1:#fff0f6;
+      --bg2:#ffe3ee;
+      --shadow: 0 18px 45px rgba(255, 45, 85, .18);
     }
 
-    * { box-sizing: border-box; }
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; margin:0; font-family: system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif; }
+
     body{
-      margin:0;
-      min-height:100vh;
-      display:grid;
-      place-items:center;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: radial-gradient(circle at top, #fff 0%, #ffe6f2 40%, #ffffff 100%);
-      color:var(--text);
-    }
-
-    .card{
-      width:min(520px, 92vw);
-      background:#fff;
-      border-radius:24px;
-      padding:28px 22px 26px;
-      box-shadow: 0 18px 50px rgba(0,0,0,.10);
-      text-align:center;
-      position:relative;
-    }
-
-    h1{
-      margin: 6px 0 18px;
-      font-size: clamp(28px, 4vw, 38px);
-      letter-spacing:.5px;
-      text-transform: lowercase;
-    }
-
-    .img-wrap{
-      width: 100%;
-      border-radius:18px;
       overflow:hidden;
-      background: #fafafa;
-      border: 2px dashed #ffd1e7;
-      aspect-ratio: 16 / 10;
-      display:grid;
-      place-items:center;
-      margin-bottom: 18px;
-      position:relative;
+      background:
+        radial-gradient(1200px 700px at 20% 20%, var(--bg1), transparent 60%),
+        radial-gradient(1000px 700px at 80% 30%, var(--bg2), transparent 55%),
+        linear-gradient(180deg, #fff, var(--soft));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#5a0b22;
     }
 
-    .img-wrap img{
+    /* کارت وسط */
+    .card{
+      position:relative;
+      width:min(92vw, 680px);
+      padding:28px 22px 24px;
+      border-radius:24px;
+      background: rgba(255,255,255,.82);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+      border:1px solid rgba(255, 45, 85, .12);
+      text-align:center;
+      z-index:3;
+    }
+
+    .title{
+      font-size: clamp(34px, 6vw, 58px);
+      line-height:1.15;
+      margin: 4px 0 12px;
+      letter-spacing: .2px;
+      background: linear-gradient(90deg, var(--red), var(--pink));
+      -webkit-background-clip: text;
+      background-clip:text;
+      color:transparent;
+      font-weight: 900;
+      text-shadow: 0 10px 35px rgba(255,45,85,.18);
+    }
+
+    .subtitle{
+      font-size: clamp(14px, 2.3vw, 18px);
+      margin: 0 0 14px;
+      opacity:.9;
+    }
+
+    .note{
+      display:inline-block;
+      padding:10px 14px;
+      border-radius:999px;
+      background: rgba(255, 45, 85, .08);
+      border: 1px solid rgba(255, 45, 85, .12);
+      font-size: 14px;
+    }
+
+    /* پس‌زمینه‌ی قلب‌های شناور */
+    .floaters{
+      position:fixed;
+      inset:0;
+      z-index:1;
+      pointer-events:none;
+      overflow:hidden;
+    }
+
+    .heart{
+      position:absolute;
+      width: 18px;
+      height: 18px;
+      transform: rotate(45deg);
+      opacity:.85;
+      filter: drop-shadow(0 10px 16px rgba(255,45,85,.18));
+      animation: drift linear infinite;
+    }
+    .heart::before,
+    .heart::after{
+      content:"";
+      position:absolute;
+      width: 18px;
+      height: 18px;
+      border-radius:50%;
+      background: inherit;
+    }
+    .heart::before{ left:-9px; top:0; }
+    .heart::after{ left:0; top:-9px; }
+
+    @keyframes drift{
+      0% { transform: translateY(30px) rotate(45deg) scale(.9); }
+      50%{ transform: translateY(-22px) rotate(45deg) scale(1.08); }
+      100%{ transform: translateY(30px) rotate(45deg) scale(.9); }
+    }
+
+    /* صحنه کانواس (انفجار) */
+    canvas{
+      position:fixed;
+      inset:0;
       width:100%;
       height:100%;
-      object-fit:cover;
-      display:block;
+      z-index:2;
+      pointer-events:none;
     }
 
-    .placeholder{
+    /* درخشش نرم روی کارت */
+    .glow{
       position:absolute;
-      inset:0;
-      display:grid;
-      place-items:center;
-      padding:16px;
-      color:#777;
-      font-size:14px;
-      background: linear-gradient(135deg, rgba(255,79,163,.08), rgba(0,0,0,0));
+      inset:-2px;
+      border-radius:26px;
+      background: radial-gradient(600px 200px at 50% 0%, rgba(255,111,183,.35), transparent 60%);
+      opacity:.55;
+      z-index:-1;
+      filter: blur(10px);
     }
 
-    .buttons{
-      display:flex;
-      gap:12px;
-      justify-content:center;
-      align-items:center;
-      padding-top: 6px;
-      position:relative;
-      height:64px; /* فضا برای فرار کردن No */
-    }
-
-    button{
-      border:none;
-      border-radius:999px;
-      padding: 12px 22px;
-      font-weight:700;
-      font-size:16px;
-      cursor:pointer;
-      transition: transform .08s ease, box-shadow .15s ease, filter .15s ease;
-      user-select:none;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    #yesBtn{
-      background: linear-gradient(135deg, var(--pink), var(--pink2));
-      color:white;
-      box-shadow: 0 10px 22px rgba(255,79,163,.35);
-    }
-    #yesBtn:hover{ filter: brightness(1.03); transform: translateY(-1px); }
-    #yesBtn:active{ transform: translateY(1px) scale(.98); }
-
-    #noBtn{
-      background: var(--gray);
-      color:#666;
-      position:absolute; /* تا بتونه جابه‌جا بشه */
-      left: 50%;
-      transform: translateX(80px); /* کنار Yes شروع بشه */
-      cursor: not-allowed; /* ولی کلیک نخواهد شد */
-      box-shadow: 0 8px 18px rgba(0,0,0,.06);
+    /* احترام به کاهش حرکت */
+    @media (prefers-reduced-motion: reduce){
+      .heart{ animation:none; }
     }
   </style>
 </head>
-
 <body>
- <div class="card">
-  <h1 style="font-weight:550;">Be my valentine?</h1>
+  <div class="floaters" id="floaters" aria-hidden="true"></div>
+  <canvas id="fx"></canvas>
 
-    <div class="img-wrap">
-      <!-- لینک عکس رو اینجا بذار -->
-      <img id="valImg" src="Teddy.webp" alt="valentine image"
-           onerror="this.style.display='none'; document.querySelector('.placeholder').style.display='grid';" />
-      <div class="placeholder">
-      </div>
-    </div>
-
-    <div class="buttons" id="arena">
-      <button id="yesBtn">Yes</button>
-      <button id="noBtn" type="button" aria-disabled="true">No</button>
-    </div>
+  <div class="card">
+    <div class="glow"></div>
+    <div class="title">Happy Valentine Dori❤️</div>
+    <div class="subtitle">My sweet little angelllllllllllllllllll💞🪽 تو بهترین اتفاقی هستی که تو کل زندگیم میتونست برام بیفته
+       و من خیلی خوشبختم که پرنسسی مثل تو رو در کنارم دارم و خدا بهترین هدیه‌ای که میشد به یه آدم داد رو به من داد. 
+      خیلی خوشحالم که اولین ولنتاین زندگیمی، عاشقتم🥺💖</div>
+    <div class="note">بزننن رو صفحهههه کلللیییی، با هربار زدنش بیشتر عاشقت میشممم</div>
   </div>
 
   <script>
-    const yesBtn = document.getElementById("yesBtn");
-    const noBtn  = document.getElementById("noBtn");
-    const arena  = document.getElementById("arena");
+    // ===== قلب‌های شناور پس‌زمینه =====
+    const floaters = document.getElementById("floaters");
+    const COLORS = ["#ff2d55", "#ff6fb7", "#ffffff", "#ffd1e6"];
 
-    // Yes کلیک‌پذیر
-    yesBtn.addEventListener("click", () => {
-      setTimeout(() => {
-        window.location.href = "yes.html";
-      }, 800); // یکم صبر کن صدا شروع شه
-    });
-    // No: جلوگیری کامل از کلیک (حتی کیبورد)
-    ["click","mousedown","mouseup","pointerdown","pointerup","touchstart","keydown"].forEach(evt=>{
-      noBtn.addEventListener(evt, (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        return false;
-      }, {passive:false});
-    });
+    function rand(min, max){ return Math.random() * (max - min) + min; }
 
-    function moveNoButton() {
-      const arenaRect = arena.getBoundingClientRect();
-      const btnRect = noBtn.getBoundingClientRect();
-
-      const padding = 6;
-      const maxX = arenaRect.width - btnRect.width - padding;
-      const maxY = arenaRect.height - btnRect.height - padding;
-
-      // جای تصادفی داخل محدوده دکمه‌ها
-      const x = Math.max(padding, Math.random() * maxX);
-      const y = Math.max(padding, Math.random() * maxY);
-
-      noBtn.style.left = `${x}px`;
-      noBtn.style.top  = `${y}px`;
-      noBtn.style.transform = "none";
+    const heartCount = 20;
+    for(let i=0;i<heartCount;i++){
+      const h = document.createElement("div");
+      h.className = "heart";
+      const size = rand(10, 26);
+      h.style.width = size + "px";
+      h.style.height = size + "px";
+      h.style.left = rand(0, 100) + "vw";
+      h.style.top  = rand(0, 100) + "vh";
+      h.style.background = COLORS[Math.floor(rand(0, COLORS.length))];
+      h.style.animationDuration = rand(2.6, 6.2) + "s";
+      h.style.animationDelay = rand(0, 2) + "s";
+      floaters.appendChild(h);
     }
 
-    // وقتی موس نزدیک شد/رفت روش، فرار کنه 😄
-    noBtn.addEventListener("mouseenter", moveNoButton);
-    noBtn.addEventListener("mousemove", moveNoButton);
-    noBtn.addEventListener("pointerenter", moveNoButton);
+    // ===== انفجار کانواس (ذرات قلبی) =====
+    const canvas = document.getElementById("fx");
+    const ctx = canvas.getContext("2d");
+    let W, H, DPR;
 
-    // برای موبایل هم با نزدیک شدن لمس، جابه‌جا بشه
-    arena.addEventListener("touchstart", (e) => {
-      // اگر لمس نزدیک دکمه No بود، جابه‌جا کن
-      const t = e.touches[0];
-      const r = noBtn.getBoundingClientRect();
-      const near = (t.clientX >= r.left-40 && t.clientX <= r.right+40 &&
-                    t.clientY >= r.top-40  && t.clientY <= r.bottom+40);
-      if (near) moveNoButton();
-    }, {passive:true});
+    function resize(){
+      DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+      W = canvas.width  = Math.floor(innerWidth * DPR);
+      H = canvas.height = Math.floor(innerHeight * DPR);
+      canvas.style.width = innerWidth + "px";
+      canvas.style.height = innerHeight + "px";
+      ctx.setTransform(DPR,0,0,DPR,0,0);
+    }
+    addEventListener("resize", resize, {passive:true});
+    resize();
 
-    // یک بار هم ابتدای کار کمی جابه‌جا کنیم
+    const particles = [];
+    function makeHeartPath(x, y, s){
+      // قلب کوچک با منحنی بزیه
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.bezierCurveTo(x - s, y - s, x - 2*s, y + s/3, x, y + 1.7*s);
+      ctx.bezierCurveTo(x + 2*s, y + s/3, x + s, y - s, x, y);
+      ctx.closePath();
+    }
+
+    function burst(x, y){
+      const n = 120;
+      for(let i=0;i<n;i++){
+        const ang = rand(0, Math.PI * 2);
+        const spd = rand(2.2, 7.2);
+        particles.push({
+          x, y,
+          vx: Math.cos(ang) * spd,
+          vy: Math.sin(ang) * spd - rand(1, 4),
+          g: rand(0.05, 0.12),
+          r: rand(3.5, 7.5),
+          rot: rand(0, Math.PI*2),
+          vr: rand(-0.18, 0.18),
+          life: rand(55, 110),
+          color: COLORS[Math.floor(rand(0, COLORS.length))]
+        });
+      }
+    }
+
+    function tick(){
+      ctx.clearRect(0,0,innerWidth, innerHeight);
+
+      for(let i=particles.length-1;i>=0;i--){
+        const p = particles[i];
+        p.life -= 1;
+        p.vy += p.g;
+        p.x  += p.vx;
+        p.y  += p.vy;
+        p.rot += p.vr;
+
+        if(p.life <= 0 || p.y > innerHeight + 40) {
+          particles.splice(i,1);
+          continue;
+        }
+
+        const alpha = Math.min(1, p.life / 40);
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        ctx.fillStyle = p.color;
+
+        // قلب (یا دایره‌ی براق سفید)
+        if (p.color === "#ffffff") {
+          ctx.beginPath();
+          ctx.arc(0, 0, p.r, 0, Math.PI*2);
+          ctx.fill();
+        } else {
+          makeHeartPath(0, -p.r*0.6, p.r*0.6);
+          ctx.fill();
+        }
+
+        ctx.restore();
+      }
+
+      requestAnimationFrame(tick);
+    }
+    tick();
+
+    // اولین "ترکیدن" بعد از لود
+    function firstBoom(){
+      burst(innerWidth * 0.5, innerHeight * 0.34);
+      setTimeout(() => burst(innerWidth * 0.35, innerHeight * 0.42), 220);
+      setTimeout(() => burst(innerWidth * 0.65, innerHeight * 0.42), 420);
+    }
+
+    // بعضی مرورگرها بدون تعامل کاربر صدا/چیزهای عجیب رو محدود می‌کنن،
+    // پس ما فقط افکت بصری داریم.
     window.addEventListener("load", () => {
-      // دکمه No از حالت اولیه بیاد داخل arena
-      moveNoButton();
-    });
+      firstBoom();
+    }, {once:true});
+
+    // با کلیک/تاچ دوباره بترکه
+    window.addEventListener("pointerdown", (e) => {
+      burst(e.clientX, e.clientY);
+    }, {passive:true});
   </script>
 </body>
 </html>
